@@ -33,7 +33,7 @@ extension Frame {
         var data = data
         var packets: [Packet] = []
 
-        guard data.count >= 3 else {
+        guard data.count >= 2 else {
             throw FrameDecoderError.invalidFrame
         }
 
