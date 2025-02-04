@@ -56,3 +56,41 @@ import Foundation
         Issue.record("Unexpected error: \(error)")
     }
 }
+
+@Test func encodeDecodeStruct() async throws {
+    struct TestStructA: Codable, Equatable {
+        let id: Int
+        let name: String
+    }
+
+    struct TestStructB: Codable, Equatable {
+        let id: Int
+        let age: Int
+    }
+
+    let testStructA = TestStructA(id: 1, name: "test")
+    let testStructB = TestStructB(id: 2, age: 20)
+    let dataA = try JSONEncoder().encode(testStructA)
+    let dataB = try JSONEncoder().encode(testStructB)
+
+    let packets = [
+        Packet(type: 0x01, payload: dataA),
+        Packet(type: 0x02, payload: dataB)
+    ] as Frame
+    let encodedData = try packets.encode()
+    let decodedPackets = try Frame.decode(from: encodedData)
+    try decodedPackets.forEach { packet in
+        switch packet.type {
+        case 0x01:
+            let decodedStructA = try JSONDecoder().decode(TestStructA.self, from: packet.payload)
+            dump(decodedStructA)
+            #expect(decodedStructA == testStructA)
+        case 0x02:
+            let decodedStructB = try JSONDecoder().decode(TestStructB.self, from: packet.payload)
+            dump(decodedStructB)
+            #expect(decodedStructB == testStructB)
+        default:
+            Issue.record("Unexpected packet type: \(packet.type)")
+        }
+    }
+}
