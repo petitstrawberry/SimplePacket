@@ -1,6 +1,6 @@
-# Simple Frame Protocol Specification (Version 1.0)
+# SimplePacket Protocol Specification (Version 1.0)
 
-This document describes the Simple Frame Protocol, which is a simple protocol for encoding and decoding frames of data. [日本語](Protocol_ja.md)
+This document describes the SimplePacket Protocol, which is a simple protocol for encoding and decoding frames of data. [日本語](Protocol_ja.md)
 
 ## Packet
 
