@@ -8,6 +8,8 @@ This document explains this package.
 
 ## Installation
 
+Swift Package Manager
+
 ```swift
 dependencies: [
     .package(url: "https://github.com/petitstrawberry/SimplePacket.git", from: "1.0.0")
