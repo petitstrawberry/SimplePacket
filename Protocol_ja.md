@@ -43,13 +43,19 @@ EOFパケットはフレームを終了するために使用される。
 
 フレームをデコードする際の手順は以下の通りである：
 
-1. データの長さが2バイト未満の場合、`FrameDecoderError.invalidFrame`エラーをスローする。
+1. データの長さが3バイト未満の場合、`FrameDecoderError.invalidFrame`エラーをスローする。
 2. データを1バイトずつ読み取り、`Packet`を生成する。
 3. `Packet`のtypeが0の場合、フレームの終わりと見なす。
-4. データの長さが2バイト未満の場合、`FrameDecoderError.invalidFrame`エラーをスローする。
+4. データの長さが3バイト未満の場合、`PacketDecoderError.invalidPacket`エラーをスローする。
 5. `Packet`のlengthフィールドを読み取り、ペイロードの長さを取得する。
 6. ペイロードを読み取る。
 7. デコードが完了したら、`Packet`の配列を返す。
+
+### エラー
+
+- `FrameDecoderError.invalidFrame`: フレームが無効な場合にスローされる。
+- `PacketDecoderError.invalidPacket`: パケットが無効な場合にスローされる。
+- `PacketDecoderError.invalidPayload`: ペイロードが無効な場合にスローされる。
 
 ## エンコード
 
@@ -59,7 +65,7 @@ EOFパケットはフレームを終了するために使用される。
 2. すべての`Packet`をバイト列に変換した後、EOF Packet (typeが0のパケット) を追加する。
 3. バイト列を返す。
 
-エンコードの例：
+### エンコード例
 
 1. `Packet`のtypeが1、lengthが3、payloadが"abc"の場合、バイト列は以下のようになる：
    - type: 0x01

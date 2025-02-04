@@ -16,8 +16,6 @@ public typealias Frame = [Packet]
 public enum FrameDecoderError: Error {
     /// The frame is invalid
     case invalidFrame
-    /// The payload is invalid
-    case invalidPayload
     /// The EOF packet is not found
     case eofNotFound
 }
@@ -38,21 +36,15 @@ extension Frame {
         }
 
         while data.count > 0 {
-            let type = data.removeFirst()
-            // If the type is 0, it means the end of the frame
-            if type == 0 {
+            let packet = try Packet.decode(from: data)
+
+            if packet == Packet.EOF {
                 break
             }
-            if data.count < 2 {
-                throw FrameDecoderError.invalidFrame
-            }
-            let length = UInt16(data.removeFirst()) | UInt16(data.removeFirst() << 8)
-            if data.count < Int(length) {
-                throw FrameDecoderError.invalidPayload
-            }
-            let payload = data.prefix(Int(length)).map { $0 }
-            data.removeFirst(Int(length))
-            packets.append(Packet(type: type, payload: Data(payload)))
+
+            packets.append(packet)
+            // Remove the packet from the data
+            data = data.dropFirst(Int(packet.length + 3))
         }
         return packets
     }

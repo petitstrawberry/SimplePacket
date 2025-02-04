@@ -1,6 +1,6 @@
 # SimplePacket Protocol Specification (Version 1.0)
 
-This document describes the SimplePacket Protocol, which is a simple protocol for encoding and decoding frames of data. [日本語](Protocol_ja.md)
+This document describes the Simple Frame Protocol, which is a simple protocol for encoding and decoding frames of data. [日本語](Protocol_ja.md)
 
 ## Packet
 
@@ -12,11 +12,11 @@ A `Packet` is a unit of data with the following structure:
 
 ### Structure
 
-| Field   | Size   | Description                                 |
-| ------- | ------ | ------------------------------------------- |
-| type    | 1 byte | Indicates the type of the packet            |
-| length  | 2 bytes| Indicates the length of the payload (little-endian) |
-| payload | N bytes| Data payload                                |
+| Field   | Size    | Description                                         |
+| ------- | ------- | --------------------------------------------------- |
+| type    | 1 byte  | Indicates the type of the packet                    |
+| length  | 2 bytes | Indicates the length of the payload (little-endian) |
+| payload | N bytes | Data payload                                        |
 
 ### EOF Packet
 
@@ -43,13 +43,19 @@ A frame is composed as follows:
 
 The steps to decode a frame are as follows:
 
-1. If the length of the data is less than 2 bytes, throw a `FrameDecoderError.invalidFrame` error.
+1. If the length of the data is less than 3 bytes, throw a `FrameDecoderError.invalidFrame` error.
 2. Read the data byte by byte and generate `Packets`.
 3. If the type of a `Packet` is 0, consider it the end of the frame.
-4. If the length of the data is less than 2 bytes, throw a `FrameDecoderError.invalidFrame` error.
+4. If the length of the data is less than 3 bytes, throw a `PacketDecoderError.invalidPacket` error.
 5. Read the length field of the `Packet` to get the length of the payload.
 6. Read the payload.
 7. Once decoding is complete, return an array of `Packets`.
+
+### Errors
+
+- `FrameDecoderError.invalidFrame`: Thrown when the frame is invalid.
+- `PacketDecoderError.invalidPacket`: Thrown when the packet is invalid.
+- `PacketDecoderError.invalidPayload`: Thrown when the payload is invalid.
 
 ## Encoding
 

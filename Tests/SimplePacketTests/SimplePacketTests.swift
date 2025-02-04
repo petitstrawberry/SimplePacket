@@ -40,6 +40,8 @@ import Foundation
         Issue.record("Expected an error")
     } catch FrameDecoderError.invalidFrame {
         // Expected
+    } catch PacketDecoderError.invalidPacket {
+        // Expected
     } catch {
         Issue.record("Unexpected error: \(error)")
     }
@@ -50,7 +52,7 @@ import Foundation
     do {
         _ = try Frame.decode(from: data)
         Issue.record("Expected an error")
-    } catch FrameDecoderError.invalidPayload {
+    } catch PacketDecoderError.invalidPayload {
         // Expected
     } catch {
         Issue.record("Unexpected error: \(error)")
